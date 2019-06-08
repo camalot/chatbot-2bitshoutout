@@ -31,10 +31,13 @@ tag="${DOCKER_ORG}/${PROJECT_NAME}";
 [[ -p "${PROJECT_NAME// }" ]] && __error "'-p' (project name) attribute is required.";
 [[ -p "${BUILD_VERSION// }" ]] && __error "'-v' (version) attribute is required.";
 
-
+mkdir -p "${WORKSPACE}/temp/";
 mkdir -p "${WORKSPACE}/dist/";
+cp -r "${WORKSPACE}/script" "${WORKSPACE}/temp/";
+cp "${WORKSPACE}/README.md" "${WORKSPACE}/script/";
+mv "${WORKSPACE}/temp/script" "${WORKSPACE}/temp/${PROJECT_NAME}";
 pushd . || exit 9;
-cd "${WORKSPACE}/root" || exit 9;
+cd "${WORKSPACE}/temp/" || exit 9;
 pwd;
 zip -r "${PROJECT_NAME}-${BUILD_VERSION}.zip" --exclude=@${WORKSPACE}/.zipignore -- *;
 mv "${PROJECT_NAME}-${BUILD_VERSION}.zip" "${WORKSPACE}/dist/";
