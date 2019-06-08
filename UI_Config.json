@@ -32,9 +32,9 @@
     },
    "MessageTemplate": {
     "type": "textbox",
-    "value": "Fellow 2BIT Community streamer @$display_name has hosted the channel. Make sure you go give them a follow https://twitch.tv/$name",
+    "value": "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
     "label": "Message Template",
-    "tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name",
+    "tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided",
     "group": "General"
   },
   "stream_team": {

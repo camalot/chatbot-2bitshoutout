@@ -21,9 +21,9 @@ clr.AddReference("IronPython.Modules.dll")
 #---------------------------------------
 ScriptName = "2Bit Shoutout"
 Website = "https://github.com/camalot/chatbot-2bitshoutout"
-Description = ""
+Description = "A script to give a custom shoutout when a 2bit member hosts or raids your channel."
 Creator = "DarthMinos"
-Version = "1.0.0"
+Version = "1.0.1"
 
 # ---------------------------------------
 #	Set Variables
@@ -54,7 +54,7 @@ class Settings(object):
         except:
             self.twitch_clientid = ""
             self.streamlabs_token = ""
-            self.MessageTemplate = "Fellow 2BIT Community streamer @$display_name has hosted the channel. Make sure you go give them a follow https://twitch.tv/$name"
+            self.MessageTemplate = "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
             self.stream_team = "2bitcommunity"
 
     def Reload(self, jsonData):
@@ -103,12 +103,14 @@ def GetTeamList():
     return
 
 
-def FindUser(user):
+def FindUser(user, action):
     global TeamList
     found = next(item for item in TeamList if item["name"] == user)
     if(found):
-        Parent.SendTwitchMessage(str.replace(str.replace(
-            ScriptSettings.MessageTemplate, "$display_name", found['display_name']), "$name", found['name']))
+        msg = str.replace(ScriptSettings.MessageTemplate, "$display_name", found['display_name'])
+        msg = str.replace(msg, "$name", found['name'])
+        msg = str.replace(msg, "$action", action + "ed")
+        Parent.SendTwitchMessage(msg)
 # ---------------------------------------
 # Chatbot Save Settings Function
 # ---------------------------------------
@@ -127,7 +129,6 @@ def ReloadSettings(jsondata):
     # Connect if token has been entered and EventReceiver is not connected
     # This can then connect without having to reload the script
     if EventReceiver and not EventReceiver.IsConnected:
-        Parent.Log(ScriptName, "NOT CONNECTED")
         if ScriptSettings.streamlabs_token:
             EventReceiver.Connect(ScriptSettings.streamlabs_token)
 
@@ -155,9 +156,10 @@ def EventReceiverEvent(sender, args):
     if evntdata and evntdata.For == "twitch_account":
         if evntdata.Type == "host":
             for message in evntdata.Message:
-                FindUser(message.Name.lower())
+                FindUser(message.Name.lower(), evntdata.Type.lower())
         elif evntdata.Type == "raid":
-                FindUser(message.Name.lower())
+            for message in evntdata.Message:
+                FindUser(message.Name.lower(), evntdata.Type.lower())
     return
 
 

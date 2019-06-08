@@ -8,3 +8,7 @@
 8. Modify the the 'Message Template' as desired.
 9. Click 'Save Settings'
 10. Profit
+
+### Install 
+
+Extract to `Chatbot Install Directory/Services/Scripts`
