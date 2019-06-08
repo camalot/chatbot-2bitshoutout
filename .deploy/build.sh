@@ -35,6 +35,7 @@ mkdir -p "${WORKSPACE}/temp/";
 mkdir -p "${WORKSPACE}/dist/";
 cp -r "${WORKSPACE}/script" "${WORKSPACE}/temp/";
 cp "${WORKSPACE}/README.md" "${WORKSPACE}/script/";
+sed -i "s/Version = \"1.0.0-snapshot\"/Version = \"${BUILD_VERSION}\"/g" "${WORKSPACE}/temp/script/2BitShoutOut_StreamlabsSystem.py";
 mv "${WORKSPACE}/temp/script" "${WORKSPACE}/temp/${PROJECT_NAME}";
 pushd . || exit 9;
 cd "${WORKSPACE}/temp/" || exit 9;

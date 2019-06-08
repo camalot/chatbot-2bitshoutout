@@ -23,7 +23,7 @@ ScriptName = "2Bit Shoutout"
 Website = "https://github.com/camalot/chatbot-2bitshoutout"
 Description = "A script to give a custom shoutout when a 2bit member hosts or raids your channel."
 Creator = "DarthMinos"
-Version = "1.0.1"
+Version = "1.0.0-snapshot"
 
 # ---------------------------------------
 #	Set Variables
