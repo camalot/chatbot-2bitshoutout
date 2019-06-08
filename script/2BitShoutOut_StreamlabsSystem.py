@@ -54,7 +54,8 @@ class Settings(object):
         except:
             self.twitch_clientid = ""
             self.streamlabs_token = ""
-            self.MessageTemplate = "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
+            self.HostMessageTemplate = "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
+            self.RaidMessageTemplate = "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
             self.stream_team = "2bitcommunity"
 
     def Reload(self, jsonData):
@@ -107,10 +108,9 @@ def FindUser(user, action):
     global TeamList
     found = next(item for item in TeamList if item["name"] == user)
     if(found):
-        msg = str.replace(ScriptSettings.MessageTemplate, "$display_name", found['display_name'])
-        msg = str.replace(msg, "$name", found['name'])
-        msg = str.replace(msg, "$action", action + "ed")
-        Parent.SendTwitchMessage(msg)
+        return found
+    else:
+        return None
 # ---------------------------------------
 # Chatbot Save Settings Function
 # ---------------------------------------
@@ -156,11 +156,26 @@ def EventReceiverEvent(sender, args):
     if evntdata and evntdata.For == "twitch_account":
         if evntdata.Type == "host":
             for message in evntdata.Message:
-                FindUser(message.Name.lower(), evntdata.Type.lower())
+                found = FindUser(message.Name.lower(), evntdata.Type.lower())
+                if(found):
+                    msg = ReplaceUserProps(
+                        ScriptSettings.HostMessageTemplate, found, evntdata.Type.lower())
+                    Parent.SendTwitchMessage(msg)
         elif evntdata.Type == "raid":
             for message in evntdata.Message:
-                FindUser(message.Name.lower(), evntdata.Type.lower())
+                found = FindUser(message.Name.lower(), evntdata.Type.lower())
+                if(found):
+                    msg = ReplaceUserProps(
+                        ScriptSettings.RaidMessageTemplate, found, evntdata.Type.lower())
+                    Parent.SendTwitchMessage(msg)
     return
+
+
+def ReplaceUserProps(template, user, action):
+    msg = str.replace(template, "$display_name", user['display_name'])
+    msg = str.replace(msg, "$name", user['name'])
+    msg = str.replace(msg, "$action", action + "ed")
+    return msg
 
 
 def Unload():

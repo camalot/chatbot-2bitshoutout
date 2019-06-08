@@ -1,54 +1,61 @@
 {
-   "output_file": "settings.json",
-   "streamlabs_token": {
-    "type": "textbox",
-    "label": "Streamlabs Socket Token",
-    "value": "",
-    "tooltip": "The Streamlabs Socket Token. This can be found on the website via the left-hand side menu -> API Settings -> API Tokens.",
-    "group": "API Keys"
-  },
-  "apisetting_button": {
-    "type": "button",
-    "label": "Get your Socket Token here",
-    "tooltip": "Click here to go to the Streamlabs API settings page",
-    "function": "OpenSLAPISettingsPage",
-    "wsevent": "",
-    "group": "API Keys"
-  },
-    "twitch_clientid": {
-      "type": "textbox",
-      "label": "Twitch Client-ID",
-      "value": "",
-      "tooltip": "The Twitch CLIENT-ID. Register an application and use the Client-ID here.",
-      "group": "API Keys"
-    },
-    "twitchapi_button": {
-      "type": "button",
-      "label": "Get your Twitch Client ID Here",
-      "tooltip": "Click here to register for your Twitch Client-ID",
-      "function": "OpenTAPISettingsPage",
-      "wsevent": "",
-      "group": "API Keys"
-    },
-   "MessageTemplate": {
-    "type": "textbox",
-    "value": "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
-    "label": "Message Template",
-    "tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided",
-    "group": "General"
-  },
-  "stream_team": {
-    "type": "textbox",
-    "value": "2bitcommunity",
-    "label": "Stream Team Name",
-    "tooltip": "The stream team name",
-    "group": "General"
-  },
-  "Open ReadMe": {
-    "type": "button",
-    "label": "Open ReadMe",
-    "tooltip": "Open ReadMe file",
-    "function": "OpenReadMe",
-    "wsevent": "EVENT_NONE"
-  }
+	"output_file": "settings.json",
+	"streamlabs_token": {
+		"type": "textbox",
+		"label": "Streamlabs Socket Token",
+		"value": "",
+		"tooltip": "The Streamlabs Socket Token. This can be found on the website via the left-hand side menu -> API Settings -> API Tokens.",
+		"group": "API Keys"
+	},
+	"apisetting_button": {
+		"type": "button",
+		"label": "Get your Socket Token here",
+		"tooltip": "Click here to go to the Streamlabs API settings page",
+		"function": "OpenSLAPISettingsPage",
+		"wsevent": "",
+		"group": "API Keys"
+	},
+	"twitch_clientid": {
+		"type": "textbox",
+		"label": "Twitch Client-ID",
+		"value": "",
+		"tooltip": "The Twitch CLIENT-ID. Register an application and use the Client-ID here.",
+		"group": "API Keys"
+	},
+	"twitchapi_button": {
+		"type": "button",
+		"label": "Get your Twitch Client ID Here",
+		"tooltip": "Click here to register for your Twitch Client-ID",
+		"function": "OpenTAPISettingsPage",
+		"wsevent": "",
+		"group": "API Keys"
+	},
+	"HostMessageTemplate": {
+		"type": "textbox",
+		"value": "Fellow 2BIT Community streamer @$display_name has hosted the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"label": "Host Message Template",
+		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided",
+		"group": "General"
+	},
+	"RaidMessageTemplate": {
+		"type": "textbox",
+		"value": "Fellow 2BIT Community streamer @$display_name has raided the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"label": "Raid Message Template",
+		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided",
+		"group": "General"
+	},
+	"stream_team": {
+		"type": "textbox",
+		"value": "2bitcommunity",
+		"label": "Stream Team Name",
+		"tooltip": "The stream team name",
+		"group": "General"
+	},
+	"Open ReadMe": {
+		"type": "button",
+		"label": "Open ReadMe",
+		"tooltip": "Open ReadMe file",
+		"function": "OpenReadMe",
+		"wsevent": "EVENT_NONE"
+	}
 }
