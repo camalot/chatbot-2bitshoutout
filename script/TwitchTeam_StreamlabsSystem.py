@@ -68,6 +68,8 @@ class Settings(object):
             self.HostMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
             self.RaidMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
             self.StreamTeam = ""
+            self.EnableHostEvent = True
+            self.EnableRaidEvent = True
 
             with codecs.open(settingsfile, encoding="utf-8-sig", mode="r") as f:
                 fileSettings = json.load(f, encoding="utf-8")
@@ -188,14 +190,14 @@ def EventReceiverEvent(sender, args):
     LAST_PARSED = evntdata.GetHashCode()
     Parent.Log(ScriptName, "type: " + evntdata.Type)
     if evntdata and evntdata.For == "twitch_account":
-        if evntdata.Type == "host":
+        if evntdata.Type == "host" and ScriptSettings.EnableHostEvent:
             for message in evntdata.Message:
                 Parent.Log(ScriptName, message.Name)
                 found = FindUser(message.Name.lower(), evntdata.Type.lower())
                 if found:
                     msg = ReplaceUserProps(ScriptSettings.HostMessageTemplate, found, evntdata.Type.lower())
                     Parent.SendTwitchMessage(msg)
-        elif evntdata.Type == "raid":
+        elif evntdata.Type == "raid" and ScriptSettings.EnableRaidEvent:
             for message in evntdata.Message:
                 found = FindUser(message.Name.lower(), evntdata.Type.lower())
                 if found:

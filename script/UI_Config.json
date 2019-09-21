@@ -7,26 +7,12 @@
 		"tooltip": "The stream team name.",
 		"group": "GENERAL"
 	},
-	"HostMessageTemplate": {
-		"type": "textbox",
-		"value": "Fellow $stream_team streamer @$display_name has hosted the channel. Make sure you go give them a follow https://twitch.tv/$name",
-		"label": "Host Message Template",
-		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
-		"group": "GENERAL"
-	},
-	"RaidMessageTemplate": {
-		"type": "textbox",
-		"value": "Fellow $stream_team streamer @$display_name has raided the channel. Make sure you go give them a follow https://twitch.tv/$name",
-		"label": "Raid Message Template",
-		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
-		"group": "GENERAL"
-	},
 	"StreamlabsToken": {
 		"type": "textbox",
 		"label": "Streamlabs Socket Token",
 		"value": "",
 		"tooltip": "The Streamlabs Socket Token. This can be found on the website via the left-hand side menu -> API Settings -> API Tokens.",
-		"group": "API KEYS (REQUIRED)"
+		"group": "GENERAL"
 	},
 	"OpenSLAPISettingsLink": {
 		"type": "button",
@@ -34,14 +20,14 @@
 		"tooltip": "Click here to go to the Streamlabs API settings page",
 		"function": "OpenSLAPISettingsLink",
 		"wsevent": "",
-		"group": "API KEYS (REQUIRED)"
+		"group": "GENERAL"
 	},
 	"TwitchClientId": {
 		"type": "textbox",
 		"label": "Twitch Client-ID",
 		"value": "",
 		"tooltip": "The Twitch CLIENT-ID. Register an application and use the Client-ID here.",
-		"group": "API KEYS (REQUIRED)"
+		"group": "GENERAL"
 	},
 	"OpenTwitchClientIdLink": {
 		"type": "button",
@@ -49,8 +35,39 @@
 		"tooltip": "Click here to register for your Twitch Client-ID",
 		"function": "OpenTwitchClientIdLink",
 		"wsevent": "EVENT_NONE",
-		"group": "API KEYS (REQUIRED)"
+		"group": "GENERAL"
 	},
+	
+	
+	"EnableHostEvent": {
+		"type": "checkbox",
+		"value": true,
+		"label": "Enable Host Events",
+		"tooltip": "If checked, host events will trigger the message",
+		"group": "EVENTS"
+	},
+	"HostMessageTemplate": {
+		"type": "textbox",
+		"value": "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"label": "Host Message Template",
+		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
+		"group": "EVENTS"
+	},
+	"EnableRaidEvent": {
+		"type": "checkbox",
+		"value": true,
+		"label": "Enable Raid Events",
+		"tooltip": "If checked, raid events will trigger the message",
+		"group": "EVENTS"
+	},
+	"RaidMessageTemplate": {
+		"type": "textbox",
+		"value": "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"label": "Host Message Template",
+		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
+		"group": "EVENTS"
+	},
+
 	"OpenDonateLink": {
 		"type": "button",
 		"label": "Donate",
