@@ -6,10 +6,8 @@ if(env.BRANCH_NAME ==~ /master$/) {
 }
 
 node ("linux") {
-	def ProjectName = "chatbot-2bitshoutout"
+	def ProjectName = "chatbot-twitchteam"
 	def slack_notify_channel = null
-
-	def SONARQUBE_INSTANCE = "bit13"
 
 	def MAJOR_VERSION = 1
 	def MINOR_VERSION = 0

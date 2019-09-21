@@ -93,49 +93,61 @@ def Init():
 
     GetTeamList()
     return
+def ScriptToggled(state):
+    if state:
+        Init()
+    else:
+        Unload()
+    return
 
+def ReloadSettings(jsondata):
+    Unload()
+    Init()
+    return
+
+
+def Unload():
+    # Disconnect EventReceiver cleanly
+    global EventReceiver
+    if EventReceiver and EventReceiver.IsConnected:
+        EventReceiver.Disconnect()
+    EventReceiver = None
+
+    # End of Unload
+    return
+
+
+def Execute(data):
+    return
+
+
+def Tick():
+    return
+
+def Parse(parseString, userid, username, targetid, targetname, message):
+    # if "$myparameter" in parseString:
+    #     return parseString.replace("$myparameter","I am a cat!")
+    return parseString
 
 def GetTeamList():
     global TeamList
-    resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.StreamTeam, headers={
-        'Accept': 'application/vnd.twitchtv.v5+json',
-        'Client-ID': ScriptSettings.TwitchClientId
-    }
-    )
-    obj = json.loads(json.loads(resp)['response'])
-    TeamList = obj['users']
-    return
+    if ScriptSettings.StreamTeam:
+        resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.StreamTeam, headers={
+            'Accept': 'application/vnd.twitchtv.v5+json',
+            'Client-ID': ScriptSettings.TwitchClientId
+        })
+        obj = json.loads(json.loads(resp)['response'])
+        TeamList = obj['users']
+        return
 
 
 def FindUser(user, action):
     global TeamList
     found = next(item for item in TeamList if item["name"] == user)
-    if(found):
+    if found:
         return found
     else:
         return None
-# ---------------------------------------
-# Chatbot Save Settings Function
-# ---------------------------------------
-
-
-def ReloadSettings(jsondata):
-    if EventReceiver and EventReceiver.IsConnected:
-        EventReceiver.Disconnect()
-
-    # Reload newly saved settings and verify
-    global ScriptSettings
-    ScriptSettings.Reload(jsondata)
-
-    # Connect if token has been entered and EventReceiver is not connected
-    # This can then connect without having to reload the script
-    if EventReceiver and not EventReceiver.IsConnected:
-        if ScriptSettings.StreamlabsToken:
-            EventReceiver.Connect(ScriptSettings.StreamlabsToken)
-
-    # End of ReloadSettings
-    return
-
 
 def EventReceiverConnected(sender, args):
     return
@@ -143,7 +155,6 @@ def EventReceiverConnected(sender, args):
 
 def EventReceiverDisconnected(sender, args):
     return
-
 
 def EventReceiverEvent(sender, args):
     global ScriptSettings
@@ -169,32 +180,12 @@ def EventReceiverEvent(sender, args):
                     Parent.SendTwitchMessage(msg)
     return
 
-
 def ReplaceUserProps(template, user, action):
     msg = str.replace(template, "$display_name", user['display_name'])
     msg = str.replace(template, "$stream_team", ScriptSettings.StreamTeam)
     msg = str.replace(msg, "$name", user['name'])
     msg = str.replace(msg, "$action", action + "ed")
     return msg
-
-
-def Unload():
-    # Disconnect EventReceiver cleanly
-    global EventReceiver
-    if EventReceiver and EventReceiver.IsConnected:
-        EventReceiver.Disconnect()
-    EventReceiver = None
-
-    # End of Unload
-    return
-
-
-def Execute(data):
-    return
-
-
-def Tick():
-    return
 
 def OpenFollowOnTwitchLink():
     os.startfile("https://twitch.tv/DarthMinos")
@@ -207,11 +198,9 @@ def OpenDonateLink():
     os.startfile(DonateLink)
     return
 
-
 def OpenSLAPISettingsPage():
     os.system("explorer https://streamlabs.com/dashboard#/settings/api-settings")
     return
-
 
 def OpenTAPISettingsPage():
     os.system("explorer https://dev.twitch.tv/console/apps/create")

@@ -4,29 +4,29 @@
 		"type": "textbox",
 		"value": "",
 		"label": "Stream Team Name",
-		"tooltip": "The stream team name",
-		"group": "General"
+		"tooltip": "The stream team name.",
+		"group": "GENERAL"
 	},
 	"HostMessageTemplate": {
 		"type": "textbox",
-		"value": "Fellow 2BIT Community streamer @$display_name has hosted the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"value": "Fellow $stream_team streamer @$display_name has hosted the channel. Make sure you go give them a follow https://twitch.tv/$name",
 		"label": "Host Message Template",
-		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided",
-		"group": "General"
+		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
+		"group": "GENERAL"
 	},
 	"RaidMessageTemplate": {
 		"type": "textbox",
-		"value": "Fellow 2BIT Community streamer @$display_name has raided the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"value": "Fellow $stream_team streamer @$display_name has raided the channel. Make sure you go give them a follow https://twitch.tv/$name",
 		"label": "Raid Message Template",
-		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided",
-		"group": "General"
+		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
+		"group": "GENERAL"
 	},
 	"StreamlabsToken": {
 		"type": "textbox",
 		"label": "Streamlabs Socket Token",
 		"value": "",
 		"tooltip": "The Streamlabs Socket Token. This can be found on the website via the left-hand side menu -> API Settings -> API Tokens.",
-		"group": "API Keys"
+		"group": "API KEYS (REQUIRED)"
 	},
 	"OpenSLAPISettingsPage": {
 		"type": "button",
@@ -34,28 +34,49 @@
 		"tooltip": "Click here to go to the Streamlabs API settings page",
 		"function": "OpenSLAPISettingsPage",
 		"wsevent": "",
-		"group": "API Keys"
+		"group": "API KEYS (REQUIRED)"
 	},
 	"TwitchClientId": {
 		"type": "textbox",
 		"label": "Twitch Client-ID",
 		"value": "",
 		"tooltip": "The Twitch CLIENT-ID. Register an application and use the Client-ID here.",
-		"group": "API Keys"
+		"group": "API KEYS (REQUIRED)"
 	},
-	"OpenTAPISettingsPage": {
+	"OpenTwitchClientIdLink": {
 		"type": "button",
 		"label": "Get your Twitch Client ID Here",
 		"tooltip": "Click here to register for your Twitch Client-ID",
-		"function": "OpenTAPISettingsPage",
-		"wsevent": "",
-		"group": "API Keys"
+		"function": "OpenTwitchClientIdLink",
+		"wsevent": "EVENT_NONE",
+		"group": "API KEYS (REQUIRED)"
+	},
+	"OpenDonateLink": {
+		"type": "button",
+		"label": "Donate",
+		"tooltip": "Donate to support development",
+		"function": "OpenDonateLink",
+		"wsevent": "EVENT_NONE"
+	},
+	"OpenFollowOnTwitchLink": {
+		"type": "button",
+		"label": "Follow Me On Twitch",
+		"tooltip": "Get Medal",
+		"function": "OpenFollowOnTwitchLink",
+		"wsevent": "EVENT_NONE"
 	},
 	"OpenReadMeLink": {
 		"type": "button",
 		"label": "Open ReadMe",
 		"tooltip": "Open ReadMe file",
 		"function": "OpenReadMeLink",
+		"wsevent": "EVENT_NONE"
+	},
+	"OpenScriptUpdater": {
+		"type": "button",
+		"label": "Check For Updates",
+		"tooltip": "Check for updates",
+		"function": "OpenScriptUpdater",
 		"wsevent": "EVENT_NONE"
 	}
 }
