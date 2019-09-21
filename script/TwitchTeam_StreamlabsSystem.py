@@ -46,11 +46,12 @@ ReadMeFile = "https://github.com/" + Repo + "/blob/develop/ReadMe.md"
 SettingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
 
 EventReceiver = None
-lastParsed = None
 ScriptSettings = None
 Debug = False
-lastParsed = 1
+LAST_PARSED = 1
 TeamList = None
+TeamDisplayName = None
+Initialized = False
 # ---------------------------------------
 #	Script Classes
 # ---------------------------------------
@@ -84,22 +85,29 @@ class Settings(object):
 
 
 def Init():
-    # Globals
     global ScriptSettings
+    global EventReceiver
+    global SLConnected
+    global Initialized
+    global TestAccounts
 
-    # Load saved settings and validate values
+    if Initialized:
+        return
     ScriptSettings = Settings(SettingsFile)
 
-    global EventReceiver
     EventReceiver = StreamlabsEventClient()
     EventReceiver.StreamlabsSocketConnected += EventReceiverConnected
     EventReceiver.StreamlabsSocketDisconnected += EventReceiverDisconnected
     EventReceiver.StreamlabsSocketEvent += EventReceiverEvent
+    Parent.Log(ScriptName, "Loaded")
 
-    if ScriptSettings.StreamlabsToken:
+    if ScriptSettings.StreamlabsToken and not EventReceiver.IsConnected:
+        Parent.Log(ScriptName, "Connecting")
         EventReceiver.Connect(ScriptSettings.StreamlabsToken)
 
-    GetTeamList()
+    if ScriptSettings.StreamTeam and ScriptSettings.TwitchClientId:
+        GetTeamList()
+    Initialized = True
     return
 def ScriptToggled(state):
     if state:
@@ -115,13 +123,16 @@ def ReloadSettings(jsondata):
 
 
 def Unload():
-    # Disconnect EventReceiver cleanly
     global EventReceiver
-    if EventReceiver and EventReceiver.IsConnected:
-        EventReceiver.Disconnect()
-    EventReceiver = None
-
-    # End of Unload
+    global Initialized
+    if EventReceiver is not None:
+        EventReceiver.StreamlabsSocketConnected -= EventReceiverConnected
+        EventReceiver.StreamlabsSocketDisconnected -= EventReceiverDisconnected
+        EventReceiver.StreamlabsSocketEvent -= EventReceiverEvent
+        if EventReceiver.IsConnected:
+            EventReceiver.Disconnect()
+        EventReceiver = None
+    Initialized = False    
     return
 
 
@@ -139,12 +150,14 @@ def Parse(parseString, userid, username, targetid, targetname, message):
 
 def GetTeamList():
     global TeamList
+    global TeamDisplayName
     if ScriptSettings.StreamTeam:
         resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.StreamTeam, headers={
             'Accept': 'application/vnd.twitchtv.v5+json',
             'Client-ID': ScriptSettings.TwitchClientId
         })
         obj = json.loads(json.loads(resp)['response'])
+        TeamDisplayName = obj['display_name']
         TeamList = obj['users']
         return
 
@@ -158,39 +171,41 @@ def FindUser(user, action):
         return None
 
 def EventReceiverConnected(sender, args):
+    Parent.Log(ScriptName, "Streamlabs event websocket connected")
     return
 
 
 def EventReceiverDisconnected(sender, args):
+    Parent.Log(ScriptName, "Streamlabs event websocket disconnected")
     return
 
 def EventReceiverEvent(sender, args):
     global ScriptSettings
-    global lastParsed
+    global LAST_PARSED
     evntdata = args.Data
-    if lastParsed == evntdata.GetHashCode():
+    if LAST_PARSED == evntdata.GetHashCode() or evntdata is None:
         return  # Fixes a strange bug where Chatbot registers to the DLL multiple times
-    lastParsed = evntdata.GetHashCode()
+    LAST_PARSED = evntdata.GetHashCode()
+    Parent.Log(ScriptName, "type: " + evntdata.Type)
     if evntdata and evntdata.For == "twitch_account":
         if evntdata.Type == "host":
             for message in evntdata.Message:
+                Parent.Log(ScriptName, message.Name)
                 found = FindUser(message.Name.lower(), evntdata.Type.lower())
-                if(found):
-                    msg = ReplaceUserProps(
-                        ScriptSettings.HostMessageTemplate, found, evntdata.Type.lower())
+                if found:
+                    msg = ReplaceUserProps(ScriptSettings.HostMessageTemplate, found, evntdata.Type.lower())
                     Parent.SendTwitchMessage(msg)
         elif evntdata.Type == "raid":
             for message in evntdata.Message:
                 found = FindUser(message.Name.lower(), evntdata.Type.lower())
-                if(found):
-                    msg = ReplaceUserProps(
-                        ScriptSettings.RaidMessageTemplate, found, evntdata.Type.lower())
+                if found:
+                    msg = ReplaceUserProps(ScriptSettings.RaidMessageTemplate, found, evntdata.Type.lower())
                     Parent.SendTwitchMessage(msg)
     return
 
 def ReplaceUserProps(template, user, action):
-    msg = str.replace(template, "$display_name", user['display_name'])
-    msg = str.replace(template, "$stream_team", ScriptSettings.StreamTeam)
+    msg = str.replace(template, "$display_name", user['display_name'] or user['name'])
+    msg = str.replace(msg, "$stream_team", TeamDisplayName or ScriptSettings.StreamTeam or 'Stream Team')
     msg = str.replace(msg, "$name", user['name'])
     msg = str.replace(msg, "$action", action + "ed")
     return msg
