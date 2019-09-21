@@ -221,12 +221,12 @@ def OpenDonateLink():
     os.startfile(DonateLink)
     return
 
-def OpenSLAPISettingsPage():
-    os.system("explorer https://streamlabs.com/dashboard#/settings/api-settings")
+def OpenSLAPISettingsLink():
+    os.startfile("https://streamlabs.com/dashboard#/settings/api-settings")
     return
 
-def OpenTAPISettingsPage():
-    os.system("explorer https://dev.twitch.tv/console/apps/create")
+def OpenTwitchClientIdLink():
+    os.startfile("https://dev.twitch.tv/console/apps/create")
     return
 
 def OpenScriptUpdater():

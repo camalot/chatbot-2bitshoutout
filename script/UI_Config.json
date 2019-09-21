@@ -28,11 +28,11 @@
 		"tooltip": "The Streamlabs Socket Token. This can be found on the website via the left-hand side menu -> API Settings -> API Tokens.",
 		"group": "API KEYS (REQUIRED)"
 	},
-	"OpenSLAPISettingsPage": {
+	"OpenSLAPISettingsLink": {
 		"type": "button",
 		"label": "Get your Socket Token here",
 		"tooltip": "Click here to go to the Streamlabs API settings page",
-		"function": "OpenSLAPISettingsPage",
+		"function": "OpenSLAPISettingsLink",
 		"wsevent": "",
 		"group": "API KEYS (REQUIRED)"
 	},
