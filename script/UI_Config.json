@@ -1,34 +1,11 @@
 {
 	"output_file": "settings.json",
-	"streamlabs_token": {
+	"StreamTeam": {
 		"type": "textbox",
-		"label": "Streamlabs Socket Token",
 		"value": "",
-		"tooltip": "The Streamlabs Socket Token. This can be found on the website via the left-hand side menu -> API Settings -> API Tokens.",
-		"group": "API Keys"
-	},
-	"apisetting_button": {
-		"type": "button",
-		"label": "Get your Socket Token here",
-		"tooltip": "Click here to go to the Streamlabs API settings page",
-		"function": "OpenSLAPISettingsPage",
-		"wsevent": "",
-		"group": "API Keys"
-	},
-	"twitch_clientid": {
-		"type": "textbox",
-		"label": "Twitch Client-ID",
-		"value": "",
-		"tooltip": "The Twitch CLIENT-ID. Register an application and use the Client-ID here.",
-		"group": "API Keys"
-	},
-	"twitchapi_button": {
-		"type": "button",
-		"label": "Get your Twitch Client ID Here",
-		"tooltip": "Click here to register for your Twitch Client-ID",
-		"function": "OpenTAPISettingsPage",
-		"wsevent": "",
-		"group": "API Keys"
+		"label": "Stream Team Name",
+		"tooltip": "The stream team name",
+		"group": "General"
 	},
 	"HostMessageTemplate": {
 		"type": "textbox",
@@ -44,18 +21,41 @@
 		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided",
 		"group": "General"
 	},
-	"stream_team": {
+	"StreamlabsToken": {
 		"type": "textbox",
-		"value": "2bitcommunity",
-		"label": "Stream Team Name",
-		"tooltip": "The stream team name",
-		"group": "General"
+		"label": "Streamlabs Socket Token",
+		"value": "",
+		"tooltip": "The Streamlabs Socket Token. This can be found on the website via the left-hand side menu -> API Settings -> API Tokens.",
+		"group": "API Keys"
 	},
-	"Open ReadMe": {
+	"OpenSLAPISettingsPage": {
+		"type": "button",
+		"label": "Get your Socket Token here",
+		"tooltip": "Click here to go to the Streamlabs API settings page",
+		"function": "OpenSLAPISettingsPage",
+		"wsevent": "",
+		"group": "API Keys"
+	},
+	"TwitchClientId": {
+		"type": "textbox",
+		"label": "Twitch Client-ID",
+		"value": "",
+		"tooltip": "The Twitch CLIENT-ID. Register an application and use the Client-ID here.",
+		"group": "API Keys"
+	},
+	"OpenTAPISettingsPage": {
+		"type": "button",
+		"label": "Get your Twitch Client ID Here",
+		"tooltip": "Click here to register for your Twitch Client-ID",
+		"function": "OpenTAPISettingsPage",
+		"wsevent": "",
+		"group": "API Keys"
+	},
+	"OpenReadMeLink": {
 		"type": "button",
 		"label": "Open ReadMe",
 		"tooltip": "Open ReadMe file",
-		"function": "OpenReadMe",
+		"function": "OpenReadMeLink",
 		"wsevent": "EVENT_NONE"
 	}
 }

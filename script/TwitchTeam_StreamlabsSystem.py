@@ -10,7 +10,7 @@ import os
 # point at lib folder for classes / references
 sys.path.append(os.path.join(os.path.dirname(__file__), "..\Libs"))
 clr.AddReferenceToFileAndPath(os.path.join(os.path.dirname(
-    os.path.realpath(__file__)), "StreamlabsEventReceiver.dll"))
+    os.path.realpath(__file__)), "./libs/StreamlabsEventReceiver.dll"))
 from StreamlabsEventReceiver import StreamlabsEventClient
 
 clr.AddReference("IronPython.SQLite.dll")
@@ -19,9 +19,9 @@ clr.AddReference("IronPython.Modules.dll")
 #---------------------------------------
 #   [Required] Script Information
 #---------------------------------------
-ScriptName = "2Bit Shoutout"
-Website = "https://github.com/camalot/chatbot-2bitshoutout"
-Description = "A script to give a custom shoutout when a 2bit member hosts or raids your channel."
+ScriptName = "Twitch Team Shoutout"
+Website = "https://github.com/camalot/chatbot-teamshoutout"
+Description = "A script to give a custom shoutout when a member of the listed twitch team hosts or raids your channel."
 Creator = "DarthMinos"
 Version = "1.0.0-snapshot"
 
@@ -29,9 +29,14 @@ Version = "1.0.0-snapshot"
 #	Set Variables
 # ---------------------------------------
 
+Repo = "camalot/chatbot-twitchteam"
+
+DonateLink = "https://paypal.me/camalotdesigns"
+ReadMeFile = "https://github.com/" + Repo + "/blob/develop/ReadMe.md"
+
 
 SettingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
-ReadMeFile = os.path.join(os.path.dirname(__file__), "README.md")
+
 EventReceiver = None
 lastParsed = None
 ScriptSettings = None
@@ -49,18 +54,21 @@ class Settings(object):
     def __init__(self, settingsfile=None):
         """ Load in saved settings file if available else set default values. """
         try:
+            self.TwitchClientId = ""
+            self.StreamlabsToken = ""
+            self.HostMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
+            self.RaidMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
+            self.StreamTeam = ""
+
             with codecs.open(settingsfile, encoding="utf-8-sig", mode="r") as f:
-                self.__dict__ = json.load(f, encoding="utf-8")
-        except:
-            self.twitch_clientid = ""
-            self.streamlabs_token = ""
-            self.HostMessageTemplate = "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
-            self.RaidMessageTemplate = "Fellow 2BIT Community streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
-            self.stream_team = "2bitcommunity"
+                fileSettings = json.load(f, encoding="utf-8")
+                self.__dict__.update(fileSettings)
+        except Exception as e:
+            Parent.Log(ScriptName, str(e))
 
     def Reload(self, jsonData):
-        """ Reload settings from the user interface by given json data. """
-        self.__dict__ = json.loads(jsonData, encoding="utf-8")
+        fileLoadedSettings = json.loads(jsonData, encoding="utf-8")
+        self.__dict__.update(fileLoadedSettings)
 
 #---------------------------------------
 #   [Required] Initialize Data / Load Only
@@ -68,9 +76,6 @@ class Settings(object):
 
 
 def Init():
-    """ Initialize script or startup or reload. """
-    Parent.Log(ScriptName, SettingsFile)
-
     # Globals
     global ScriptSettings
 
@@ -82,11 +87,9 @@ def Init():
     EventReceiver.StreamlabsSocketConnected += EventReceiverConnected
     EventReceiver.StreamlabsSocketDisconnected += EventReceiverDisconnected
     EventReceiver.StreamlabsSocketEvent += EventReceiverEvent
-    Parent.Log(ScriptName, "Loaded")
 
-    if ScriptSettings.streamlabs_token:
-        Parent.Log(ScriptName, "Connecting")
-        EventReceiver.Connect(ScriptSettings.streamlabs_token)
+    if ScriptSettings.StreamlabsToken:
+        EventReceiver.Connect(ScriptSettings.StreamlabsToken)
 
     GetTeamList()
     return
@@ -94,9 +97,9 @@ def Init():
 
 def GetTeamList():
     global TeamList
-    resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.stream_team, headers={
+    resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.StreamTeam, headers={
         'Accept': 'application/vnd.twitchtv.v5+json',
-        'Client-ID': ScriptSettings.twitch_clientid
+        'Client-ID': ScriptSettings.TwitchClientId
     }
     )
     obj = json.loads(json.loads(resp)['response'])
@@ -117,8 +120,6 @@ def FindUser(user, action):
 
 
 def ReloadSettings(jsondata):
-    Parent.Log(ScriptName, "Reload")
-
     if EventReceiver and EventReceiver.IsConnected:
         EventReceiver.Disconnect()
 
@@ -129,27 +130,25 @@ def ReloadSettings(jsondata):
     # Connect if token has been entered and EventReceiver is not connected
     # This can then connect without having to reload the script
     if EventReceiver and not EventReceiver.IsConnected:
-        if ScriptSettings.streamlabs_token:
-            EventReceiver.Connect(ScriptSettings.streamlabs_token)
+        if ScriptSettings.StreamlabsToken:
+            EventReceiver.Connect(ScriptSettings.StreamlabsToken)
 
     # End of ReloadSettings
     return
 
 
 def EventReceiverConnected(sender, args):
-    Parent.Log(ScriptName, "Streamlabs event websocket connected")
     return
 
 
 def EventReceiverDisconnected(sender, args):
-    Parent.Log(ScriptName, "Streamlabs event websocket disconnected")
     return
 
 
 def EventReceiverEvent(sender, args):
-    evntdata = args.Data
     global ScriptSettings
     global lastParsed
+    evntdata = args.Data
     if lastParsed == evntdata.GetHashCode():
         return  # Fixes a strange bug where Chatbot registers to the DLL multiple times
     lastParsed = evntdata.GetHashCode()
@@ -173,14 +172,13 @@ def EventReceiverEvent(sender, args):
 
 def ReplaceUserProps(template, user, action):
     msg = str.replace(template, "$display_name", user['display_name'])
+    msg = str.replace(template, "$stream_team", ScriptSettings.StreamTeam)
     msg = str.replace(msg, "$name", user['name'])
     msg = str.replace(msg, "$action", action + "ed")
     return msg
 
 
 def Unload():
-    Parent.Log(ScriptName, "Unload")
-
     # Disconnect EventReceiver cleanly
     global EventReceiver
     if EventReceiver and EventReceiver.IsConnected:
@@ -198,6 +196,17 @@ def Execute(data):
 def Tick():
     return
 
+def OpenFollowOnTwitchLink():
+    os.startfile("https://twitch.tv/DarthMinos")
+    return
+
+def OpenReadMeLink():
+    os.startfile(ReadMeFile)
+    return
+def OpenDonateLink():
+    os.startfile(DonateLink)
+    return
+
 
 def OpenSLAPISettingsPage():
     os.system("explorer https://streamlabs.com/dashboard#/settings/api-settings")
@@ -208,8 +217,43 @@ def OpenTAPISettingsPage():
     os.system("explorer https://dev.twitch.tv/console/apps/create")
     return
 
-
-def OpenReadMe():
-    """ Open the script readme file in users default .txt application. """
-    os.startfile(ReadMeFile)
-    return
+def OpenScriptUpdater():
+    currentDir = os.path.realpath(os.path.dirname(__file__))
+    chatbotRoot = os.path.realpath(os.path.join(currentDir, "../../../"))
+    libsDir = os.path.join(currentDir, "libs/updater")
+    try:
+        src_files = os.listdir(libsDir)
+        tempdir = tempfile.mkdtemp()
+        Parent.Log(ScriptName, tempdir)
+        for file_name in src_files:
+            full_file_name = os.path.join(libsDir, file_name)
+            if os.path.isfile(full_file_name):
+                Parent.Log(ScriptName, "Copy: " + full_file_name)
+                shutil.copy(full_file_name, tempdir)
+        updater = os.path.join(tempdir, "ChatbotScriptUpdater.exe")
+        updaterConfigFile = os.path.join(tempdir, "update.manifest")
+        repoVals = Repo.split('/')
+        updaterConfig = {
+            "path": os.path.realpath(os.path.join(currentDir,"../")),
+            "version": Version,
+            "name": ScriptName,
+            "requiresRestart": True,
+            "kill": [],
+            "execute": {
+                "before": [],
+                "after": []
+            },
+            "chatbot": os.path.join(chatbotRoot, "Streamlabs Chatbot.exe"),
+            "script": os.path.basename(os.path.dirname(os.path.realpath(__file__))),
+            "website": Website,
+            "repository": {
+                "owner": repoVals[0],
+                "name": repoVals[1]
+            }
+        }
+        configJson = json.dumps(updaterConfig)
+        with open(updaterConfigFile, "w+") as f:
+            f.write(configJson)
+        os.startfile(updater)
+    except OSError as exc: # python >2.5
+        raise
