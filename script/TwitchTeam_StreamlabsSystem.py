@@ -70,6 +70,9 @@ class Settings(object):
             self.StreamTeam = ""
             self.EnableHostEvent = True
             self.EnableRaidEvent = True
+            SOEPath = os.path.realpath(os.path.join(os.path.dirname(__file__), "../Shoutout"))
+            SOEExists = os.path.isdir(SOEPath)
+            self.EnableShoutoutHook = SOEExists
 
             with codecs.open(settingsfile, encoding="utf-8-sig", mode="r") as f:
                 fileSettings = json.load(f, encoding="utf-8")
@@ -89,9 +92,7 @@ class Settings(object):
 def Init():
     global ScriptSettings
     global EventReceiver
-    global SLConnected
     global Initialized
-    global TestAccounts
 
     if Initialized:
         return
@@ -197,12 +198,16 @@ def EventReceiverEvent(sender, args):
                 if found:
                     msg = ReplaceUserProps(ScriptSettings.HostMessageTemplate, found, evntdata.Type.lower())
                     Parent.SendTwitchMessage(msg)
+                    if ScriptSettings.EnableShoutoutHook:
+                        SendUsernameWebsocket(message.Name.lower())
         elif evntdata.Type == "raid" and ScriptSettings.EnableRaidEvent:
             for message in evntdata.Message:
                 found = FindUser(message.Name.lower(), evntdata.Type.lower())
                 if found:
                     msg = ReplaceUserProps(ScriptSettings.RaidMessageTemplate, found, evntdata.Type.lower())
                     Parent.SendTwitchMessage(msg)
+                    if ScriptSettings.EnableShoutoutHook:
+                        SendUsernameWebsocket(message.Name.lower())
     return
 
 def ReplaceUserProps(template, user, action):
@@ -212,8 +217,23 @@ def ReplaceUserProps(template, user, action):
     msg = str.replace(msg, "$action", action + "ed")
     return msg
 
+def SendUsernameWebsocket(username):
+    # Broadcast WebSocket Event
+    payload = {
+        "user": username
+    }
+    SendWebsocketData("EVENT_SO_COMMAND", payload)
+    return
+def SendWebsocketData(eventName, payload):
+    Parent.Log(ScriptName, "Trigger Event: " + eventName)
+    Parent.BroadcastWsEvent(eventName, json.dumps(payload))
+    return
 def OpenFollowOnTwitchLink():
     os.startfile("https://twitch.tv/DarthMinos")
+    return
+
+def OpenShoutoutOverlayLink():
+    os.startfile("https://github.com/camalot/chatbot-shoutout")
     return
 
 def OpenReadMeLink():

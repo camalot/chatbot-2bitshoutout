@@ -68,6 +68,23 @@
 		"group": "EVENTS"
 	},
 
+	"EnableShoutoutHook": {
+		"type": "checkbox",
+		"label": "Enable Shoutout Overlay Hook",
+		"tooltip": "If you have the Shoutout Overlay setup, this will trigger that overlay.",
+		"value": false,
+		"wsevent": "EVENT_NONE",
+		"group": "EVENTS"
+	},
+	"OpenShoutoutOverlayLink": {
+		"type": "button",
+		"label": "Get the Shoutout Overlay Script",
+		"tooltip": "Opens the page to get the Shoutout Overlay script",
+		"function": "OpenShoutoutOverlayLink",
+		"wsevent": "EVENT_NONE",
+		"group": "EVENTS"
+	},
+
 	"OpenDonateLink": {
 		"type": "button",
 		"label": "Donate",
