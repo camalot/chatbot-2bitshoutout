@@ -155,7 +155,7 @@ def GetTeamList():
     global TeamList
     global TeamDisplayName
     if ScriptSettings.StreamTeam:
-        resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.StreamTeam, headers={
+        resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.StreamTeam.lower(), headers={
             'Accept': 'application/vnd.twitchtv.v5+json',
             'Client-ID': ScriptSettings.TwitchClientId
         })
