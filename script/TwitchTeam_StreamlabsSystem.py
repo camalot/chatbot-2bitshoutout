@@ -63,7 +63,6 @@ class Settings(object):
     def __init__(self, settingsfile=None):
         """ Load in saved settings file if available else set default values. """
         try:
-            self.TwitchClientId = ""
             self.StreamlabsToken = ""
             self.HostMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
             self.RaidMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
@@ -108,7 +107,7 @@ def Init():
         Parent.Log(ScriptName, "Connecting")
         EventReceiver.Connect(ScriptSettings.StreamlabsToken)
 
-    if ScriptSettings.StreamTeam and ScriptSettings.TwitchClientId:
+    if ScriptSettings.StreamTeam:
         GetTeamList()
     Initialized = True
     return
@@ -155,19 +154,17 @@ def GetTeamList():
     global TeamList
     global TeamDisplayName
     if ScriptSettings.StreamTeam:
-        resp = Parent.GetRequest("https://api.twitch.tv/kraken/teams/" + ScriptSettings.StreamTeam.lower(), headers={
-            'Accept': 'application/vnd.twitchtv.v5+json',
-            'Client-ID': ScriptSettings.TwitchClientId
-        })
+        resp = Parent.GetRequest("https://decapi.me/twitch/team_members/" + ScriptSettings.StreamTeam.lower(), headers={})
         obj = json.loads(json.loads(resp)['response'])
-        TeamDisplayName = obj['display_name']
-        TeamList = obj['users']
+        Parent.Log(ScriptName, json.dumps(obj))
+        TeamDisplayName = ScriptSettings.StreamTeam.lower()
+        TeamList = obj
         return
 
 
 def FindUser(user, action):
     global TeamList
-    found = next(item for item in TeamList if item["name"] == user)
+    found = next(item for item in TeamList if item.lower() == user.lower())
     if found:
         return found
     else:
@@ -196,24 +193,32 @@ def EventReceiverEvent(sender, args):
                 Parent.Log(ScriptName, message.Name)
                 found = FindUser(message.Name.lower(), evntdata.Type.lower())
                 if found:
+                    Parent.Log(ScriptName, "Host: Found: " + found) 
                     msg = ReplaceUserProps(ScriptSettings.HostMessageTemplate, found, evntdata.Type.lower())
                     Parent.SendTwitchMessage(msg)
+                    Parent.Log(ScriptName, msg) 
                     if ScriptSettings.EnableShoutoutHook:
                         SendUsernameWebsocket(message.Name.lower())
+                else:
+                    Parent.Log(ScriptName, "Host Not Found")
         elif evntdata.Type == "raid" and ScriptSettings.EnableRaidEvent:
             for message in evntdata.Message:
                 found = FindUser(message.Name.lower(), evntdata.Type.lower())
                 if found:
+                    Parent.Log(ScriptName, "Raid: Found: " + found) 
                     msg = ReplaceUserProps(ScriptSettings.RaidMessageTemplate, found, evntdata.Type.lower())
                     Parent.SendTwitchMessage(msg)
+                    Parent.Log(ScriptName, msg) 
                     if ScriptSettings.EnableShoutoutHook:
                         SendUsernameWebsocket(message.Name.lower())
+                else:
+                    Parent.Log(ScriptName, "Raid Not Found")
     return
 
 def ReplaceUserProps(template, user, action):
-    msg = str.replace(template, "$display_name", user['display_name'] or user['name'])
+    msg = str.replace(template, "$display_name", user)
     msg = str.replace(msg, "$stream_team", TeamDisplayName or ScriptSettings.StreamTeam or 'Stream Team')
-    msg = str.replace(msg, "$name", user['name'])
+    msg = str.replace(msg, "$name", user)
     msg = str.replace(msg, "$action", action + "ed")
     return msg
 

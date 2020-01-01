@@ -22,22 +22,6 @@
 		"wsevent": "",
 		"group": "GENERAL"
 	},
-	"TwitchClientId": {
-		"type": "textbox",
-		"label": "Twitch Client-ID",
-		"value": "",
-		"tooltip": "The Twitch CLIENT-ID. Register an application and use the Client-ID here.",
-		"group": "GENERAL"
-	},
-	"OpenTwitchClientIdLink": {
-		"type": "button",
-		"label": "Get your Twitch Client ID Here",
-		"tooltip": "Click here to register for your Twitch Client-ID",
-		"function": "OpenTwitchClientIdLink",
-		"wsevent": "EVENT_NONE",
-		"group": "GENERAL"
-	},
-	
 	
 	"EnableHostEvent": {
 		"type": "checkbox",
