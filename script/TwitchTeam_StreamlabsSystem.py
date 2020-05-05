@@ -38,8 +38,6 @@ Version = "1.0.0-snapshot"
 # ---------------------------------------
 
 Repo = "camalot/chatbot-twitchteam"
-
-DonateLink = "https://paypal.me/camalotdesigns"
 ReadMeFile = "https://github.com/" + Repo + "/blob/develop/ReadMe.md"
 
 
@@ -244,10 +242,16 @@ def OpenShoutoutOverlayLink():
 def OpenReadMeLink():
     os.startfile(ReadMeFile)
     return
-def OpenDonateLink():
-    os.startfile(DonateLink)
-    return
 
+def OpenPaypalDonateLink():
+    os.startfile("https://paypal.me/camalotdesigns/10")
+    return
+def OpenGithubDonateLink():
+    os.startfile("https://github.com/sponsors/camalot")
+    return
+def OpenTwitchDonateLink():
+    os.startfile("http://twitch.tv/darthminos/subscribe")
+    return
 def OpenSLAPISettingsLink():
     os.startfile("https://streamlabs.com/dashboard#/settings/api-settings")
     return
