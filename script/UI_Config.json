@@ -3,8 +3,8 @@
 	"StreamTeam": {
 		"type": "textbox",
 		"value": "",
-		"label": "Stream Team Name",
-		"tooltip": "The stream team name.",
+		"label": "Stream Teams",
+		"tooltip": "A comma separated list of stream teams",
 		"group": "GENERAL"
 	},
 	"StreamlabsToken": {
@@ -32,7 +32,7 @@
 	},
 	"HostMessageTemplate": {
 		"type": "textbox",
-		"value": "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"value": "Fellow Stream Team member @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
 		"label": "Host Message Template",
 		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
 		"group": "EVENTS"
@@ -46,7 +46,7 @@
 	},
 	"RaidMessageTemplate": {
 		"type": "textbox",
-		"value": "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
+		"value": "Fellow Stream Team member @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name",
 		"label": "Host Message Template",
 		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
 		"group": "EVENTS"

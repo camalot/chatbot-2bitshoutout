@@ -42,6 +42,7 @@ ReadMeFile = "https://github.com/" + Repo + "/blob/develop/ReadMe.md"
 
 
 SettingsFile = os.path.join(os.path.dirname(__file__), "settings.json")
+UIConfigFile = os.path.join(os.path.dirname(__file__), "UI_Config.json")
 
 EventReceiver = None
 ScriptSettings = None
@@ -60,22 +61,37 @@ class Settings(object):
 
     def __init__(self, settingsfile=None):
         """ Load in saved settings file if available else set default values. """
+        defaults = self.DefaultSettings(UIConfigFile)
         try:
-            self.StreamlabsToken = ""
-            self.HostMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
-            self.RaidMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
-            self.StreamTeam = ""
-            self.EnableHostEvent = True
-            self.EnableRaidEvent = True
+            # self.StreamlabsToken = ""
+            # self.HostMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
+            # self.RaidMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
+            # self.StreamTeam = ""
+            # self.EnableHostEvent = True
+            # self.EnableRaidEvent = True
             SOEPath = os.path.realpath(os.path.join(os.path.dirname(__file__), "../Shoutout"))
             SOEExists = os.path.isdir(SOEPath)
             self.EnableShoutoutHook = SOEExists
-
+            self.__dict__.update(defaults)
             with codecs.open(settingsfile, encoding="utf-8-sig", mode="r") as f:
                 fileSettings = json.load(f, encoding="utf-8")
                 self.__dict__.update(fileSettings)
         except Exception as e:
+            self.__dict__.update(defaults)
             Parent.Log(ScriptName, str(e))
+
+    def DefaultSettings(self, settingsfile=None):
+        defaults = dict()
+        with codecs.open(settingsfile, encoding="utf-8-sig", mode="r") as f:
+            ui = json.load(f, encoding="utf-8")
+        for key in ui:
+            try:
+                if "value" in ui[key]:
+                    defaults[key] = ui[key]['value']
+            except:
+                if key != "output_file":
+                    Parent.Log(ScriptName, "DefaultSettings(): Could not find key {0} in settings".format(key))
+        return defaults
 
     def Reload(self, jsonData):
         fileLoadedSettings = json.loads(jsonData, encoding="utf-8")
@@ -90,6 +106,7 @@ def Init():
     global ScriptSettings
     global EventReceiver
     global Initialized
+    global TeamList
 
     if Initialized:
         return
@@ -104,7 +121,7 @@ def Init():
     if ScriptSettings.StreamlabsToken and not EventReceiver.IsConnected:
         Parent.Log(ScriptName, "Connecting")
         EventReceiver.Connect(ScriptSettings.StreamlabsToken)
-
+    TeamList = list()
     if ScriptSettings.StreamTeam:
         GetTeamList()
     Initialized = True
@@ -152,11 +169,18 @@ def GetTeamList():
     global TeamList
     global TeamDisplayName
     if ScriptSettings.StreamTeam:
-        resp = Parent.GetRequest("https://decapi.me/twitch/team_members/" + ScriptSettings.StreamTeam.lower(), headers={})
-        obj = json.loads(json.loads(resp)['response'])
-        Parent.Log(ScriptName, json.dumps(obj))
-        TeamDisplayName = ScriptSettings.StreamTeam.lower()
-        TeamList = obj
+        teams = ScriptSettings.StreamTeam.lower().split(',')
+        Parent.Log(ScriptName, "Load Teams: {0}".format(json.dumps(teams)))
+        for team in teams:
+            url = "https://decapi.me/twitch/team_members/{0}/".format(team.strip())
+            resp = Parent.GetRequest(url, headers={})
+            obj = json.loads(json.loads(resp)['response'])
+            obj_set = set(obj)
+            team_set = set(TeamList)
+            diff = obj_set - team_set
+            TeamDisplayName = ScriptSettings.StreamTeam.lower()
+            TeamList = TeamList + list(diff)
+            Parent.Log(ScriptName, "TeamList: {0}".format(json.dumps(TeamList)))
         return
 
 
@@ -215,7 +239,7 @@ def EventReceiverEvent(sender, args):
 
 def ReplaceUserProps(template, user, action):
     msg = str.replace(template, "$display_name", user)
-    msg = str.replace(msg, "$stream_team", TeamDisplayName or ScriptSettings.StreamTeam or 'Stream Team')
+    msg = str.replace(msg, "$stream_team", 'Stream Team')
     msg = str.replace(msg, "$name", user)
     msg = str.replace(msg, "$action", action + "ed")
     return msg
