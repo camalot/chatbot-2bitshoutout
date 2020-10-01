@@ -63,12 +63,6 @@ class Settings(object):
         """ Load in saved settings file if available else set default values. """
         defaults = self.DefaultSettings(UIConfigFile)
         try:
-            # self.StreamlabsToken = ""
-            # self.HostMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
-            # self.RaidMessageTemplate = "Fellow $stream_team streamer @$display_name has $action the channel. Make sure you go give them a follow https://twitch.tv/$name"
-            # self.StreamTeam = ""
-            # self.EnableHostEvent = True
-            # self.EnableRaidEvent = True
             SOEPath = os.path.realpath(os.path.join(os.path.dirname(__file__), "../Shoutout"))
             SOEExists = os.path.isdir(SOEPath)
             self.EnableShoutoutHook = SOEExists
@@ -282,6 +276,10 @@ def OpenSLAPISettingsLink():
 
 def OpenTwitchClientIdLink():
     os.startfile("https://dev.twitch.tv/console/apps/create")
+    return
+    
+def OpenDiscordLink():
+    os.startfile("https://discord.com/invite/vzdpjYk")
     return
 
 def OpenScriptUpdater():

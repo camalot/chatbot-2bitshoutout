@@ -22,7 +22,6 @@
 		"wsevent": "",
 		"group": "GENERAL"
 	},
-	
 	"EnableHostEvent": {
 		"type": "checkbox",
 		"value": true,
@@ -51,7 +50,6 @@
 		"tooltip": "$name = hosting channel name\r\n$display_name = hosting user display name\r\n$action = The event action: hosted or raided\r\n$stream_team = Stream Team name",
 		"group": "EVENTS"
 	},
-
 	"EnableShoutoutHook": {
 		"type": "checkbox",
 		"label": "Enable Shoutout Overlay Hook",
@@ -89,12 +87,18 @@
 		"function": "OpenTwitchDonateLink",
 		"wsevent": "EVENT_NONE"
 	},
-	
 	"OpenFollowOnTwitchLink": {
 		"type": "button",
 		"label": "Follow Me On Twitch",
 		"tooltip": "Get Medal",
 		"function": "OpenFollowOnTwitchLink",
+		"wsevent": "EVENT_NONE"
+	},
+	"OpenDiscordLink": {
+		"type": "button",
+		"label": "JOIN DISCORD",
+		"tooltip": "Join Discord for updates and support",
+		"function": "OpenDiscordLink",
 		"wsevent": "EVENT_NONE"
 	},
 	"OpenReadMeLink": {
