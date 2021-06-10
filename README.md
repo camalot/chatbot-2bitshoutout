@@ -1,4 +1,5 @@
 # CHATBOT TWITCH TEAM
+[![Twitch Team](https://github.com/camalot/chatbot-twitchteam/actions/workflows/build.yml/badge.svg)](https://github.com/camalot/chatbot-twitchteam/actions/workflows/build.yml)
 
 A script that will automatically shoutout a streamer from the specified twitch team.
 
