@@ -1,7 +1,8 @@
 name: Twitch Team
+on:
   push:
     branches:
-      - develop
+    - develop
 jobs:
   createRelease:
     runs-on: ubuntu-latest
